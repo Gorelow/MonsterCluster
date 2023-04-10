@@ -24,6 +24,8 @@ namespace Interfaces
 
         protected abstract void SetConnectToControllerEvents(bool active);
 
+        protected virtual void InitAdditional() { }
+
         private void OnEnable()
         {
             SetConnectionToController(true);

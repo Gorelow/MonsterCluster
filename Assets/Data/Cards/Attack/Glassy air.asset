@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e301c1daedc9c44b919b68a4417dc5, type: 3}
+  m_Name: Glassy air
+  m_EditorClassIdentifier: 
+  _name: Glassy air
+  _sprite: {fileID: 21300000, guid: e8329a1c71f61cc44b8391719f3382da, type: 3}
+  _description: Deal 1 damage to everyone moved this round per fire card
+  _cost: 2
+  _actionType: 1
+  _element: 0
+  _elementOfBonus: 0
+  _aimGroup: 5
+  _aimAmount: 2
+  _debuffCondition: 4
+  _range: 7
+  _rangeBonus: 0
+  _attack:
+    _damage: 0
+    _damageBonus: 1
+  _debuff:
+    _debuffType: 2
+    _strength: 0
+    _strengthBonus: 0
+    _duration: 1
+    _durationBonus: 0

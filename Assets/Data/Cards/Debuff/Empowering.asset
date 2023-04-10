@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e301c1daedc9c44b919b68a4417dc5, type: 3}
+  m_Name: Empowering
+  m_EditorClassIdentifier: 
+  _name: Empowering
+  _sprite: {fileID: 21300000, guid: 693fc5472449ad2498de549978fffef4, type: 3}
+  _description: Attack power of friendly unit raizes by FIRE on one move
+  _cost: 4
+  _actionType: 2
+  _element: 3
+  _elementOfBonus: 3
+  _aimGroup: 0
+  _aimAmount: 0
+  _debuffCondition: 0
+  _range: 7
+  _rangeBonus: 0
+  _attack:
+    _damage: 0
+    _damageBonus: 0
+  _debuff:
+    _debuffType: 12
+    _strength: 0
+    _strengthBonus: 1
+    _duration: 1
+    _durationBonus: 0

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 910551f50a8a65c4b8ceb8bf680a79cd, type: 3}
+  m_Name: OrcShaman
+  m_EditorClassIdentifier: 
+  _name: Orc shaman
+  _description: 
+  _cost: 300
+  _image: {fileID: 21300000, guid: ef81c05ed2b386f47b2f79732d9a4f0c, type: 3}
+  _hp: 14
+  _initiative: 2
+  _speed: 9
+  _deck:
+  - {fileID: 11400000, guid: e2aed07ed92b59546b143675010ee5a3, type: 2}
+  - {fileID: 11400000, guid: 7c5fa4cdd4cf140488382ab257a3dc3c, type: 2}
+  - {fileID: 11400000, guid: e1f94d71407a09f48b72b21792c2d264, type: 2}
+  - {fileID: 11400000, guid: c7b3d7fb1f1238749bbe407917881e8c, type: 2}
+  _animaton: {fileID: 9100000, guid: f6e5cc8693cb66846a3ff1f9b919035f, type: 2}

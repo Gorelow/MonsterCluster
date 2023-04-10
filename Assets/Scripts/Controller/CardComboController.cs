@@ -1,85 +1,81 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Basic;
 using Interfaces;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CardComboController : MonoBehaviour, ICardComboController
 {
     [SerializeField] private PlayerHandController _hand;
-    [SerializeField] private CardComboView _view;
+    [SerializeField] private IView<ICardComboController> _view;
 
     [SerializeField] private Button _attackButton;
 
-    private CardController _moveCard;
-    private CardController _attackCard;
-    private CardController _debuffCard;
+    private Dictionary<CardActionType, ICardController> _cardCombo;
+    
+    public event Action<CardActionType, ICardController> OnTypeCardChange;
+    public event Action<bool> OnChangeActive;
+    public event Action<bool> OnAvailability;
+    public event Action<int> OnChangeComboPrice;
 
-    public Action<CardController, CardController, CardController> OnComboPlay;
-    public Action<CardController, CardController, CardController, int> OnComboBuilding;
-    public Action<CardActionType, CardController> OnComboCardChange;
-    public Action<bool> OnAvalibility;
-    public Action<bool> OnChangeActive;
+    public Action<Dictionary<CardActionType, ICardController>> OnComboPlay;
+    public Action<Dictionary<CardActionType, ICardController>, int> OnComboBuilding;
+    public Action<CardActionType, ICardController> OnComboCardChange;
 
-    private int spellCost;
-    [SerializeField] private int _avalibleEnergy;
+    private int _spellCost;
+    private int _availableEnergy;
 
-    public int SpellsCost => spellCost;
-    public int AvalibleEnergy => _avalibleEnergy;
+    public int SpellsCost => _spellCost;
+    public int AvailableEnergy => _availableEnergy;
 
     public void Set(PlayerHandController hand)
     {
         hand.OnMadUnsellect += (CardActionType type) => MadChange(type, null);
         hand.OnMadSellect += MadChange;
-        _view.Set(this);
+        _view.Init(this);
     }
 
-    public void Activate(int avalibleEnergy)
+    public void Reboot(int avalibleEnergy)
     {
-        _avalibleEnergy = avalibleEnergy;
-        _moveCard = null;
-        _attackCard = null;
-        _debuffCard = null;
-        spellCost = 0;
+        _availableEnergy = avalibleEnergy;
+        CardComboReset();
+        _spellCost = 0;
         OnChangeActive?.Invoke(true);
     }
 
-    public void MadChange(CardActionType type, CardController value)
+    private void CardComboReset() => _cardCombo = new Dictionary<CardActionType, ICardController>() 
+                                                              { { CardActionType.Moving, null },
+                                                                { CardActionType.Attack, null },
+                                                                { CardActionType.Debuff, null } };
+
+    public void MadChange(CardActionType type, ICardController value)
     {
         OnComboCardChange?.Invoke(type, value);
-        switch (type)
-        {
-            case CardActionType.Moving:
-                ChangeComboSlotValue(ref _moveCard, value); 
-                break;
-            case CardActionType.Attack:
-                ChangeComboSlotValue(ref _attackCard, value);
-                break;
-            case CardActionType.Debuff:
-                ChangeComboSlotValue(ref _debuffCard, value);
-                break;
-        }
+        ChangeComboSlotValue(type, value); 
     }
 
-    private void ChangeComboSlotValue(ref CardController slot, CardController newVal)
+    private void ChangeComboSlotValue(CardActionType slot, ICardController newVal)
     {
-        if (slot != null)
-            spellCost -= slot.Data.Cost;
+        _cardCombo[slot] = newVal;
+        _spellCost = CalculateComboPrice();
 
-        slot = newVal;
-        if (slot != null)
-            spellCost += slot.Data.Cost;
-
-        OnAvalibility?.Invoke(spellCost <= _avalibleEnergy);
-        OnComboBuilding?.Invoke(_moveCard, _attackCard, _debuffCard, spellCost);
+        OnAvailability?.Invoke(SpellsCost <= AvailableEnergy);
+        OnComboBuilding?.Invoke(_cardCombo, SpellsCost);
     }
+
+    private int CalculateComboPrice() => _cardCombo.Where(card => card.Value != null)
+                                                  .Sum(card => card.Value.Cost);
 
     public void Play()
     {
         Debug.Log("Combo box is being played!");
         OnChangeActive?.Invoke(false);
-        OnComboPlay?.Invoke(_moveCard, _debuffCard, _attackCard);
+        OnComboPlay?.Invoke(_cardCombo);
     }
+
 }
+// 86 до

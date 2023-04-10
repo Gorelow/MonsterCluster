@@ -55,7 +55,7 @@ public class PlayerTurnController : MonoBehaviour
         if (!_monsters.Contains(unit)) return;
 
         _currentMonster = unit;
-        _combo.Activate(unit.Data.Speed);
+        _combo.Reboot(unit.Data.Speed);
         _hand.Take(6);
         SetPlayerTurn(true);
     }

@@ -9,5 +9,7 @@ namespace Interfaces
         public event Action<bool> OnChangeActive;
         public event Action<bool> OnAvailability;
         public event Action<int> OnChangeComboPrice;
+        
+        public int AvailableEnergy { get;}
     }
 }

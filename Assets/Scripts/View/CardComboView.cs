@@ -45,6 +45,11 @@ public class CardComboView : View<ICardComboController>
         }
     }
 
+    protected override void InitAdditional()
+    {
+        _unitEnergy.text = _controller.AvailableEnergy.ToString();
+    }
+
     private void SetAppear(bool active) => _animator.SetTrigger(active ? OnAppear : OnDisappear);
     
     private void ShowAvailability(bool active) => _unavalabilityImage.enabled = !active;
@@ -61,5 +66,3 @@ public class CardComboView : View<ICardComboController>
         _cardActionImage[type].sprite = val?.Sprite;
     }
 }
-
-// было 124 (слишком много)

@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using Basic;
 using Interfaces;
@@ -8,17 +7,18 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+[Serializable]
+public class CardActionTypeImageDictionary : UnitySerializedDictionary<CardActionType, Image> { }
+
 public class CardComboView : View<ICardComboController>
 {
     public static readonly int CHANGE_DELAY = 250;
 
     [SerializeField] private Animator _animator;
 
-    [SerializeField] private Image _moveImage;
-    [SerializeField] private Image _attackImage;
-    [SerializeField] private Image _debuffImage;
+    [SerializeField] private CardActionTypeImageDictionary _cardActionImage;
     [FormerlySerializedAs("_cost")] [SerializeField] private Slider _price;
-    [SerializeField] private Image _unavalability;
+    [FormerlySerializedAs("_unavalability")] [SerializeField] private Image _unavalabilityImage;
     [SerializeField] private TextMeshProUGUI _unitEnergy;
 
     private static readonly int OnAppear = Animator.StringToHash("OnAppear");
@@ -47,7 +47,7 @@ public class CardComboView : View<ICardComboController>
 
     private void SetAppear(bool active) => _animator.SetTrigger(active ? OnAppear : OnDisappear);
     
-    private void ShowAvailability(bool active) => _unavalability.enabled = !active;
+    private void ShowAvailability(bool active) => _unavalabilityImage.enabled = !active;
 
     private void ChangeEnergyPrice(int value) => _price.value = value;
     
@@ -57,15 +57,9 @@ public class CardComboView : View<ICardComboController>
         _animator.SetTrigger(OnChange);
 
         await Task.Delay(CHANGE_DELAY);
-
-        switch (type)
-        {
-            case CardActionType.Moving: _moveImage.sprite = val?.Sprite; break;
-            case CardActionType.Attack: _attackImage.sprite = val?.Sprite; break;
-            case CardActionType.Debuff: _debuffImage.sprite = val?.Sprite; break;
-        }
+        
+        _cardActionImage[type].sprite = val?.Sprite;
     }
-
 }
 
 // было 124 (слишком много)

@@ -2,10 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Basic;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardComboController : MonoBehaviour
+public class CardComboController : MonoBehaviour, ICardComboController
 {
     [SerializeField] private PlayerHandController _hand;
     [SerializeField] private CardComboView _view;

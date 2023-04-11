@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using View;
 
 public class CardController : MonoBehaviour, ICardController, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {

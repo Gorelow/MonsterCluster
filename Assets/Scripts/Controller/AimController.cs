@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
+using View;
 
 public class AimController : MonoBehaviour, IAimController
 {

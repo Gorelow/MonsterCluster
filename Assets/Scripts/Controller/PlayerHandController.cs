@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Basic;
 using Interfaces;
 using UnityEngine;
+using View;
 
 public class PlayerHandController : MonoBehaviour, IPlayerHandController
 {

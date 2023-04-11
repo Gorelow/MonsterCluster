@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace View
 {
-    public class TurnOrderView : MonoBehaviour
+    public class TurnOrderView : View<ITurnOrderController>
     {
         public readonly static float POINTER_SPEED = 12;
         //public readonly static float POINTER_SPEED = 10;
@@ -17,28 +17,16 @@ namespace View
         [SerializeField] private GameObject _turnPointer;
         [SerializeField] private RectTransform _rectTransform;
 
-        private ITurnOrderController _controller;
-        private bool _isActive;
-        //private bool
-
-        public void Set(ITurnOrderController controller)
+        protected override void InitAdditional()
         {
-            _controller = controller;
-
             for (int i = 0; i < _images.Count; i++)
             {
-                _images[i].sprite = controller.Order(i).Image;
+                _images[i].sprite = _controller.Order(i).Image;
             }
-
-            SetConnection(true);
         }
 
-        private void SetConnection(bool active)
+        protected override void SetConnectToControllerEvents(bool active)
         {
-            if (_controller == null || _isActive == active) return;
-
-            _isActive = active;
-
             if (active)
             {
                 _controller.OnUnitDeath += DeleteUnit;
@@ -50,15 +38,6 @@ namespace View
                 _controller.OnNextTurnNumberChange -= MoveTurnPointer;
             }
         }
-        private void OnEnable()
-        {
-            SetConnection(true);
-        }
-
-        private void OnDisable()
-        {
-            SetConnection(false);
-        }
 
         private void DeleteUnit(int index)
         {
@@ -69,11 +48,12 @@ namespace View
         private async void MoveTurnPointer(int indexPosition)
         {
             Vector2 size = _rectTransform.sizeDelta;
-            Vector2 boxSize = new Vector2(size.x / _images.Count, size.y);
-            Vector2 leftSide = (Vector2)_rectTransform.position / _rectTransform.lossyScale - (size + Vector2.right * boxSize.x) / 2;
+            Vector2 unitImageSize = new Vector2(size.x / _images.Count, 0);
+            var lossyScale = _rectTransform.lossyScale;
+            Vector2 startingPointerCoordinate = (Vector2)_rectTransform.position / lossyScale - (size + unitImageSize) / 2;
 
-            Vector2 stPos = (leftSide + Vector2.right * boxSize.x * ((indexPosition + _images.Count - 1) % _images.Count + 1)) * _rectTransform.lossyScale;
-            Vector2 endPos = (leftSide + Vector2.right * boxSize.x * (indexPosition + 1)) * _rectTransform.lossyScale;
+            Vector2 stPos = (startingPointerCoordinate + ((indexPosition + _images.Count - 1) % _images.Count + 1) * unitImageSize) * lossyScale;
+            Vector2 endPos = (startingPointerCoordinate + (indexPosition + 1) * unitImageSize) * lossyScale;
 
             _turnPointer.transform.position = stPos;
             do
@@ -84,3 +64,4 @@ namespace View
         }
     }
 }
+//87

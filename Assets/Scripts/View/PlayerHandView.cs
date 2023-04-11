@@ -5,45 +5,24 @@ using UnityEngine;
 
 namespace View
 {
-    public class PlayerHandView : MonoBehaviour
+    public class PlayerHandView : View<IPlayerHandController>
     {
-        public static int CARD_SHOW_DELAY = 120;
+        public readonly static int CARD_SHOW_DELAY = 120;
 
         [SerializeField] private RectTransform _rectTransform;
-        private List<ICardView> _cards = new List<ICardView>();
+        private readonly List<ICardView> _cards = new List<ICardView>();
 
-        private IPlayerHandController _controller;
-        private bool _isActive;
 
-        public void Set(IPlayerHandController controller)
+        protected override void SetConnectToControllerEvents(bool active)
         {
-            _controller = controller;
-            SetConnection(true);
-        }
-
-        private void SetConnection(bool active)
-        {
-            if (_controller == null || _isActive == active) return;
-
-            _isActive = active;
-
             if (active)
             {
-                _controller.OnTakeCards += TakeCards;
+                _controller.OnTakeCards += PositionCardsWithAdditionOf;
             }
             else
             {
-                _controller.OnTakeCards -= TakeCards;
+                _controller.OnTakeCards -= PositionCardsWithAdditionOf;
             }
-        }
-        private void OnEnable()
-        {
-            SetConnection(true);
-        }
-
-        private void OnDisable()
-        {
-            SetConnection(false);
         }
 
         public Vector2 GetCardPosition(int cardAmount, int cardIndex, Vector2 cardSize)
@@ -56,7 +35,7 @@ namespace View
             return (leftSide + Vector2.right * (gapX + cardSize.x) * cardIndex) * _rectTransform.lossyScale;
         }
 
-        private async void TakeCards(List<ICardView> cards)
+        private async void PositionCardsWithAdditionOf(List<ICardView> cards)
         {
             int cardNewAmount = cards.Count + _cards.Count;
             _cards.AddRange(cards);

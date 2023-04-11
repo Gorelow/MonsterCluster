@@ -11,6 +11,7 @@ namespace Interfaces
         {
             _controller = controller;
             SetConnectionToController(true);
+            InitAdditional();
         }
 
         private void SetConnectionToController(bool active)

@@ -6,13 +6,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardView : MonoBehaviour, ICardView
+public class CardView : View<ICardController>, ICardView
 {
     public readonly static Vector2 CARD_SIZE = new Vector2(200, 320);
     public readonly static float CARD_MOVING_SPEED = 10;
-    public readonly static string ANIMATION_HOVER_PARAMETER_NAME = "IsHovered";
-    public readonly static string ANIMATION_SELECTION_PARAMETER_NAME = "IsSelected";
-    public readonly static string ANIMATION_DISCARD_TRIGGER_NAME = "OnDiscard";
 
     [SerializeField] public TextMeshProUGUI _name;
     [SerializeField] public Image _image;
@@ -23,31 +20,22 @@ public class CardView : MonoBehaviour, ICardView
     [SerializeField] public Slider _cost;
 
     [SerializeField] public Animator _animator;
+    
+    private static readonly int IsHovered = Animator.StringToHash("IsHovered");
+    private static readonly int IsSelected = Animator.StringToHash("IsSelected");
+    private static readonly int OnDiscard = Animator.StringToHash("OnDiscard");
 
-    private ICardController _controller;
-    private bool _isActive;
+    protected override void InitAdditional() => UpdateCard();
 
-    public void Set(ICardController controller)
+    protected override void SetConnectToControllerEvents(bool active)
     {
-        _controller = controller;
-        UpdateCard();
-
-        SetConnection(true);
-    }
-
-    private void SetConnection(bool active)
-    {
-        if (_controller == null || _isActive == active) return;
-
-        _isActive = active;
-
         if (active)
         {
             _controller.OnSelect += () => ShowSelection(true);
             _controller.OnUnselect += () => ShowSelection(false);
             _controller.OnMouseHover += () => SetHover(true);
             _controller.OnMouseStopHover += () => SetHover(false);
-            _controller.OnDiscard += () => _animator.SetTrigger(ANIMATION_DISCARD_TRIGGER_NAME);
+            _controller.OnDiscard += () => _animator.SetTrigger(OnDiscard);
         }
         else
         {
@@ -56,15 +44,6 @@ public class CardView : MonoBehaviour, ICardView
             _controller.OnMouseHover -= () => SetHover(true);
             _controller.OnMouseStopHover -= () => SetHover(false);
         }
-    }
-    private void OnEnable()
-    {
-        SetConnection(true);
-    }
-
-    private void OnDisable()
-    {
-        SetConnection(false);
     }
 
     public void UpdateCard()
@@ -87,17 +66,11 @@ public class CardView : MonoBehaviour, ICardView
         } while (Vector2.Distance(transform.position, newPosition) > 1);
     }
 
-    public void ShowSelection(bool active) => _animator.SetBool(ANIMATION_SELECTION_PARAMETER_NAME, active);
+    private void ShowSelection(bool active) => _animator.SetBool(IsSelected, active);
 
-    private void SetHover(bool active) => _animator.SetBool(ANIMATION_HOVER_PARAMETER_NAME, active);
+    private void SetHover(bool active) => _animator.SetBool(IsHovered, active);
 
-    public void TeleportTo(Vector2 newPosition)
-    {
-        transform.position = newPosition;
-    }
+    public void TeleportTo(Vector2 newPosition) => transform.position = newPosition;
 
-    public void SetActive(bool active)
-    {
-        gameObject.SetActive(true);
-    }
+    public void SetActive(bool active) => gameObject.SetActive(true);
 }

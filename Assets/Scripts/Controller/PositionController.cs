@@ -51,7 +51,6 @@ public class PositionController : MonoBehaviour
 
     public List<UnitController> FindAffected(UnitController unit, bool isMonster, CardData card)
     {
-        /// 1, 2, все
         List<UnitController> res = new List<UnitController>();
 
         switch (card.AimGroup)
@@ -76,14 +75,12 @@ public class PositionController : MonoBehaviour
                                                 SetGroupSelf(ref res, unit, false);
                 break;
 
-
             case AimGroups.Enemies:         res.AddRange(GetGroup(isMonster, true));
                 break;
             case AimGroups.EnemiesAndSelf:  res.AddRange(GetGroup(isMonster, true));
                                             SetGroupSelf(ref res, unit, true);
                 break;
         }
-
         foreach (UnitController affected in res)
             if (Math.Max(Math.Abs(unit.Position.x - affected.Position.x),
                          Math.Abs(unit.Position.y - affected.Position.y)) > card.CalculatedRange) res.Remove(affected);

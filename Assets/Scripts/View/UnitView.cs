@@ -1,38 +1,25 @@
+using System;
+using Basic;
 using Interfaces;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace View
 {
-    public class UnitView : MonoBehaviour
+    [Serializable]
+    public class AnimationStateToViewEffectDictionary : UnitySerializedDictionary<AnimationStates, ViewEffect> { }
+    
+    public class UnitView : View<IUnitController>
     {
-        [SerializeField] private Animator _animator;
+        [FormerlySerializedAs("_animator")] [SerializeField] private Animator animator;
 
-        [SerializeField] private AudioSource _hurtAudio;
-        [SerializeField] private AudioSource _deathAudio;
-        [SerializeField] private AudioSource _healAudio;
-        [SerializeField] private AudioSource _moveAudio;
-        [SerializeField] private ParticleSystem _hurtParticle;
-        [SerializeField] private ParticleSystem _deathParticle;
-        [SerializeField] private ParticleSystem _healParticle;
-        [SerializeField] private ParticleSystem _moveParticle;
+        [SerializeField] private AnimationStateToViewEffectDictionary stateEffects;
 
-        private IUnitController _controller;
-        private bool _isActive;
+        protected override void InitAdditional() => UpdateUnit();
 
-        public void Set(IUnitController controller)
+        protected override void SetConnectToControllerEvents(bool active)
         {
-            _controller = controller;
-
-            UpdateUnit();
-            SetConnection(true);
-        }
-
-        private void SetConnection(bool active)
-        {
-            if (_controller == null || _isActive == active) return;
-
-            _isActive = active;
-
             if (active)
             {
                 _controller.OnGettingDamage += (int i) => PlayAnimation(AnimationStates.Hurt);
@@ -49,39 +36,30 @@ namespace View
             }
         }
 
-        public void PlayAnimation(AnimationStates animation)
-        {
-            switch (animation)
-            {
-                case AnimationStates.Hurt: _hurtAudio?.Play(); _hurtParticle?.Play(); break;
-                case AnimationStates.Dead: _deathAudio?.Play(); _deathParticle?.Play(); break;
-                case AnimationStates.Moving: if (_moveAudio != null) _moveAudio.Play(); if (_moveParticle != null) _moveParticle?.Play(); break;
-                case AnimationStates.Healing: if (_healAudio != null) _healAudio?.Play(); if (_healParticle != null) _healParticle?.Play(); break;
-            }
-        }
+        private void PlayAnimation(AnimationStates animationState) => stateEffects[animationState].Play();
 
-        private void OnEnable()
-        {
-            SetConnection(true);
-        }
+        private void UpdateUnit() => animator.runtimeAnimatorController = _controller.Animation;
+    }
+    
+    public enum AnimationStates
+    {
+        Hurt,
+        Dead,
+        Moving,
+        Healing
+    }
 
-        private void OnDisable()
-        {
-            SetConnection(false);
-        }
+    [Serializable]
+    public struct ViewEffect
+    {
+        [SerializeField] private AudioSource audio;
+        [SerializeField] private ParticleSystem particleSystem;
 
-        public void UpdateUnit()
+        public void Play()
         {
-            _animator.runtimeAnimatorController = _controller.Animation;
-        }
-        public enum AnimationStates
-        {
-            Hurt,
-            Dead,
-            Moving,
-            Healing
+            if (audio != null) audio.Play();
+            if (particleSystem != null)  particleSystem.Play();
         }
     }
 }
-
-
+//92~
